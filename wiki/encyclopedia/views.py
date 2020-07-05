@@ -6,9 +6,9 @@ from . import util
 
 
 def index(request):
-    #If user submit the search form
+    # If user submit the search form
     if request.method == 'POST':
-        #Check if the query matches the name of an entry
+        # Check if the query matches the name of an entry
         if util.get_entry(request.POST.get('q')) == None:
             return redirect('results', query=request.POST.get('q'))
         
@@ -21,7 +21,7 @@ def index(request):
         })
 
 def entry(request, title):
-    #Check if the entry exists to show the appropriate page
+    # Check if the entry exists to show the appropriate page
     if util.get_entry(title) == None:
         return render(request, "encyclopedia/entry.html",{
             "entry": "<h1>Entry not found!<h1>",
@@ -36,6 +36,7 @@ def entry(request, title):
         })
 
 def results(request, query):
+    # Save all entries in a list and check if the query is a substring
     entries = util.list_entries()
 
     searchTerm = query
