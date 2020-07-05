@@ -1,0 +1,26 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+{% if resultsList %} 
+<div class="row">
+    <div class="col">
+        <h3>Showing results for '{{ term }}'</h3>
+    </div>
+</div>     
+<div class="row">
+    <ul>
+{% for item in resultsList %}
+        <li><a href="{% url 'entry' item %}">{{ item }}</a></li>        
+{% endfor %}
+    </ul>
+</div>
+
+{% else %}
+    <h2 class="text-black">No results found for '{{ term }}'</h2>
+{% endif %}
+
+{% endblock %}

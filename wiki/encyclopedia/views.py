@@ -10,7 +10,7 @@ def index(request):
     if request.method == 'POST':
         #Check if the query matches the name of an entry
         if util.get_entry(request.POST.get('q')) == None:
-            return redirect('entry', title="NOTFOUND")
+            return redirect('results', query=request.POST.get('q'))
         
         else:
             return redirect('entry', title=request.POST.get('q'))
@@ -34,3 +34,16 @@ def entry(request, title):
             "entry": markdown2.markdown(mdfile),
             "title": title
         })
+
+def results(request, query):
+    entries = util.list_entries()
+
+    searchTerm = query
+
+    resultsList = [i for i in entries if searchTerm in i]
+
+    return render(request, "encyclopedia/results.html", {
+        "resultsList": resultsList,
+        "term": searchTerm
+    })
+    
