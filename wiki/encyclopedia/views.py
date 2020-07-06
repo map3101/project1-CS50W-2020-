@@ -3,7 +3,7 @@ import markdown2
 from django.shortcuts import render, redirect
 
 from . import util
-
+from .forms import CreateForm
 
 def index(request):
     # If user submit the search form
@@ -47,4 +47,28 @@ def results(request, query):
         "resultsList": resultsList,
         "term": searchTerm
     })
-    
+
+def create(request):
+    alert = ""
+    if request.method == 'POST':
+        form = CreateForm()
+        form.title = request.POST.get('title')
+        form.text = request.POST.get('text')
+        #check if the entry exists
+        if util.get_entry(form.title) != None:
+            alert = "ERROR: This entry already exists!"
+            return render(request, "encyclopedia/create.html", {
+                "form": form,
+                "alert": alert
+            })
+        
+        else:
+            util.save_entry(form.title, form.text)
+            return redirect('entry', title=form.title)
+            
+    else:
+        form = CreateForm()
+        return render(request, "encyclopedia/create.html", {
+            "form": form,
+            "alert": alert
+        })

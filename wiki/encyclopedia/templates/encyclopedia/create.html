@@ -1,0 +1,28 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create page
+{% endblock %}
+
+{% block body %}
+    <h1>Create a new entry</h1>
+    <form action="{% url 'create' %}" method="POST">
+        {% csrf_token %}
+        <table>
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </br>
+            {{ form.text.label_tag }}
+        </br>
+            {{ form.text }}
+        </table>
+        {% if alert != "" %}    
+        <div class="container ml-5">
+            <div class="alert alert-danger text-center" role="alert">
+                {{ alert }}
+            </div>  
+        </div> 
+{% endif %}  
+        <button type="submit" class="btn btn-primary">Save entry</button>
+    </form>
+{% endblock %}
