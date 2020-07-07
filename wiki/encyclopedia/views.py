@@ -3,7 +3,7 @@ import markdown2
 from django.shortcuts import render, redirect
 
 from . import util
-from .forms import CreateForm
+from .forms import CreateForm, EditForm
 
 def index(request):
     # If user submit the search form
@@ -39,13 +39,11 @@ def results(request, query):
     # Save all entries in a list and check if the query is a substring
     entries = util.list_entries()
 
-    searchTerm = query
-
-    resultsList = [i for i in entries if searchTerm in i]
+    resultsList = [i for i in entries if query in i]
 
     return render(request, "encyclopedia/results.html", {
         "resultsList": resultsList,
-        "term": searchTerm
+        "term": query
     })
 
 def create(request):
@@ -71,4 +69,18 @@ def create(request):
         return render(request, "encyclopedia/create.html", {
             "form": form,
             "alert": alert
+        })
+
+def edit(request, title):
+    if request.method == 'POST':
+        form = EditForm()
+        form.text = request.POST.get('text')
+        util.save_entry(title, form.text)
+        return redirect('entry', title=title)
+
+    else:
+        form = EditForm(initial={'text': util.get_entry(title)})
+        return render(request, "encyclopedia/edit.html", {
+            "form": form,
+            "title": title
         })
