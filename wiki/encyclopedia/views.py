@@ -1,4 +1,5 @@
 import markdown2
+from random import randint
 
 from django.shortcuts import render, redirect
 
@@ -25,14 +26,16 @@ def entry(request, title):
     if util.get_entry(title) == None:
         return render(request, "encyclopedia/entry.html",{
             "entry": "<h1>Entry not found!<h1>",
-            "title": "ERROR Entry not found"
+            "title": "ERROR Entry not found",
+            "link": False
         })
     
     else:
         mdfile = util.get_entry(title)
         return render(request, "encyclopedia/entry.html",{
             "entry": markdown2.markdown(mdfile),
-            "title": title
+            "title": title,
+            "link": True
         })
 
 def results(request, query):
@@ -78,9 +81,26 @@ def edit(request, title):
         util.save_entry(title, form.text)
         return redirect('entry', title=title)
 
-    else:
-        form = EditForm(initial={'text': util.get_entry(title)})
-        return render(request, "encyclopedia/edit.html", {
-            "form": form,
-            "title": title
-        })
+    else: #method == 'GET'
+        #Check if the entry exists
+        if util.get_entry(title) == None:
+            return render(request, "encyclopedia/entry.html",{
+                "entry": "<h1>Entry not found!<h1>",
+                "title": "ERROR Entry not found",
+                "link": False
+            })
+        
+        else:
+            form = EditForm(initial={'text': util.get_entry(title)})
+            return render(request, "encyclopedia/edit.html", {
+                "form": form,
+                "title": title
+            })
+
+def random(request):
+    #get all entries in a list
+    entries_list = util.list_entries()
+    #Generate random number using the list length 
+    number = randint(0, (len(entries_list) - 1))
+    #return a random element of the list
+    return redirect('entry', title=entries_list[number])
